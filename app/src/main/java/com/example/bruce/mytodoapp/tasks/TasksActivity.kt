@@ -14,12 +14,14 @@ import com.example.bruce.mytodoapp.Injection
 import com.example.bruce.mytodoapp.R
 import com.example.bruce.mytodoapp.statistics.StatisticsActivity
 import com.example.bruce.mytodoapp.util.ActivityUtils
+import kotlinx.android.synthetic.main.tasks_act.*
+
 
 class TasksActivity : AppCompatActivity() {
 
     val CURRENT_FILTERING_KEY: String = "CURRENT_FILTERING_KEY"
 
-    var mDrawerLayout: DrawerLayout? = null
+//    var mDrawerLayout: DrawerLayout? = null
 
     var mTasksPresenter: TasksContract.Presenter? = null
 
@@ -28,18 +30,22 @@ class TasksActivity : AppCompatActivity() {
         setContentView(R.layout.tasks_act)
 
         // Set up the toolbar.
-        var toolbar: Toolbar? = findViewById(R.id.toolbar)
+//        var toolbar: Toolbar? = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         var ab: ActionBar? = supportActionBar
         ab?.setHomeAsUpIndicator(R.drawable.ic_menu)
         ab?.setDisplayHomeAsUpEnabled(true)
 
         // Set up the navigation drawer.
-        mDrawerLayout = findViewById(R.id.drawer_layout)
-        mDrawerLayout?.setStatusBarBackground(R.color.colorPrimaryDark)
-        var navigationView: NavigationView? = findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            setupDrawerContent(navigationView)
+//        mDrawerLayout = findViewById(R.id.drawer_layout)
+//        mDrawerLayout?.setStatusBarBackground(R.color.colorPrimaryDark)
+        drawer_layout.setStatusBarBackground(R.color.colorPrimaryDark)
+//        var navigationView: NavigationView? = findViewById(R.id.nav_view)
+//        if (navigationView != null) {
+//            setupDrawerContent(navigationView)
+//        }
+        if (nav_view != null) {
+            setupDrawerContent(nav_view)
         }
 
         var tasksFragment: Fragment? = supportFragmentManager.findFragmentById(R.id.contentFrame)
@@ -67,7 +73,7 @@ class TasksActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> {
                 // Open the navigation drawer when the home icon is selected from the toolbar.
-                mDrawerLayout?.openDrawer(GravityCompat.START)
+                drawer_layout?.openDrawer(GravityCompat.START)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -83,7 +89,7 @@ class TasksActivity : AppCompatActivity() {
             }
 
             menuItem.setChecked(true)
-            mDrawerLayout?.closeDrawers()
+            drawer_layout?.closeDrawers()
             true
         }
     }

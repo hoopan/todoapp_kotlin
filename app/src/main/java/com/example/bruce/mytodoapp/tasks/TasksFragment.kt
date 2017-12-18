@@ -1,15 +1,20 @@
 package com.example.bruce.mytodoapp.tasks
 
+import android.content.Intent
+import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.bruce.mytodoapp.R
+import com.example.bruce.mytodoapp.addedittask.AddEditTaskActivity
 import com.example.bruce.mytodoapp.data.Task
+import kotlinx.android.synthetic.main.tasks_act.*
+import kotlinx.android.synthetic.main.tasks_frag.*
 
 /**
  * Created by bruce on 17-12-15.
@@ -22,23 +27,61 @@ class TasksFragment : Fragment(), TasksContract.View {
         }
     }
 
-    private var mPresenter: TasksContract.Presenter? = null
+    private lateinit var mPresenter: TasksContract.Presenter
 
-    private var mListAdapter: TasksAdapter? = null
+    private lateinit var mListAdapter: TasksAdapter
 
-    private var mNoTasksView: View? = null
 
-    private var mNoTaskIcon: ImageView? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mListAdapter = TasksAdapter(ArrayList<Task>(0), mItemListener)
+    }
 
-    private var mNoTaskMainView: TextView? = null
+    override fun onResume() {
+        super.onResume()
+        mPresenter.start()
+    }
 
-    private var mNoTaskAddView: TextView? = null
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-    private var mTasksView: LinearLayout? = null
+        // Set up tasks view
+        var root = inflater?.inflate(R.layout.tasks_frag, container, false)
 
-    private var mFilteringLabelView: TextView? = null
+
+        return root
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        tasks_list.adapter = mListAdapter
+
+        noTasksAdd.setOnClickListener({
+            showAddTask()
+        })
+//        FloatingActionButton fab =
+        var fab: FloatingActionButton = activity.findViewById<FloatingActionButton>(R.id.fab_add_task)
+        fab.setImageResource(R.drawable.ic_add)
+        fab.setOnClickListener({
+            mPresenter.addNewTask()
+        })
+//        fab_add_task.setImageResource(R.drawable.ic_add)
+//        fab_add_task.setOnClickListener({ mPresenter.addNewTask() })
+
+        // Set up progress indicator
+        (refresh_layout).setColorSchemeColors(
+                ContextCompat.getColor(activity, R.color.colorPrimary),
+                ContextCompat.getColor(activity, R.color.colorAccent),
+                ContextCompat.getColor(activity, R.color.colorPrimaryDark)
+        )
+
+        // Set the scrolling view in the custom SwipeRefreshLayout.
+        (refresh_layout).mScrollUpChild = tasks_list
+        (refresh_layout).setOnRefreshListener({ mPresenter.loadTasks(false) })
+        setHasOptionsMenu(true)
+    }
 
     override fun setPresenter(presenter: TasksContract.Presenter) {
+        mPresenter = checkNotNull(presenter)
     }
 
     override fun setLoadingIndicator(active: Boolean) {
@@ -48,6 +91,8 @@ class TasksFragment : Fragment(), TasksContract.View {
     }
 
     override fun showAddTask() {
+        var intent = Intent(context,AddEditTaskActivity::class.java)
+        startActivityForResult(intent,AddEditTaskActivity.REQUEST_ADD_TASK)
     }
 
     override fun showTaskDetailsUi(taskId: String) {
@@ -93,6 +138,21 @@ class TasksFragment : Fragment(), TasksContract.View {
     }
 
 
+    /**
+     * Listener for clicks on tasks in the ListView.
+     */
+    var mItemListener = object : TaskItemListener {
+        override fun onTaskClick(clickedTask: Task) {
+        }
+
+        override fun onCompleteTaskClick(completedTask: Task) {
+        }
+
+        override fun onActivateTaskClick(activatedTask: Task) {
+        }
+
+    }
+
     class TasksAdapter : BaseAdapter {
 
         private lateinit var mTasks: List<Task>
@@ -116,7 +176,7 @@ class TasksFragment : Fragment(), TasksContract.View {
 
             var rowView: View? = p1
             if (rowView == null) {
-                rowView = LayoutInflater.from(p2!!.context).inflate(R.layout.task_item,p2,false)
+                rowView = LayoutInflater.from(p2!!.context).inflate(R.layout.task_item, p2, false)
             }
 
             val task: Task = getItem(p0) as Task

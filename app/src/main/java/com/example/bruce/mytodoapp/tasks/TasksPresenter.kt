@@ -7,7 +7,7 @@ import com.example.bruce.mytodoapp.data.source.TasksRepository
 /**
  * Created by bruce on 17-12-15.
  */
-class TasksPresenter : TasksContract.Presenter{
+class TasksPresenter : TasksContract.Presenter {
 
     private val mTasksRepository: TasksRepository
 
@@ -17,7 +17,7 @@ class TasksPresenter : TasksContract.Presenter{
 
     private var mFirstLoad: Boolean = true
 
-    public constructor(@NonNull tasksRepository: TasksRepository,@NonNull tasksView: TasksContract.View) {
+    constructor(@NonNull tasksRepository: TasksRepository, @NonNull tasksView: TasksContract.View) {
         mTasksRepository = checkNotNull(tasksRepository)
         mTasksView = checkNotNull(tasksView)
 
@@ -34,6 +34,7 @@ class TasksPresenter : TasksContract.Presenter{
     }
 
     override fun addNewTask() {
+        mTasksView?.showAddTask()
     }
 
     override fun openTaskDetails(requestedTask: Task) {

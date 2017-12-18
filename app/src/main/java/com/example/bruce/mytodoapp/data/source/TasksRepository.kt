@@ -18,7 +18,7 @@ class TasksRepository : TasksDataSource{
          * @param tasksLocalDataSource  the device storage data source
          * @return the {@link TasksRepository} instance
          */
-        public fun getInstance(tasksRemoteDataSource: TasksDataSource,tasksLocalDataSource: TasksDataSource): TasksRepository {
+        fun getInstance(tasksRemoteDataSource: TasksDataSource,tasksLocalDataSource: TasksDataSource): TasksRepository {
             if (INSTANCE == null) {
                 INSTANCE = TasksRepository(tasksRemoteDataSource,tasksLocalDataSource)
             }
