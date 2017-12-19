@@ -13,7 +13,6 @@ import android.widget.TextView
 import com.example.bruce.mytodoapp.R
 import com.example.bruce.mytodoapp.addedittask.AddEditTaskActivity
 import com.example.bruce.mytodoapp.data.Task
-import kotlinx.android.synthetic.main.tasks_act.*
 import kotlinx.android.synthetic.main.tasks_frag.*
 
 /**
@@ -43,12 +42,7 @@ class TasksFragment : Fragment(), TasksContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        // Set up tasks view
-        var root = inflater?.inflate(R.layout.tasks_frag, container, false)
-
-
-        return root
+        return inflater?.inflate(R.layout.tasks_frag, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -58,14 +52,12 @@ class TasksFragment : Fragment(), TasksContract.View {
         noTasksAdd.setOnClickListener({
             showAddTask()
         })
-//        FloatingActionButton fab =
+
         var fab: FloatingActionButton = activity.findViewById<FloatingActionButton>(R.id.fab_add_task)
         fab.setImageResource(R.drawable.ic_add)
         fab.setOnClickListener({
             mPresenter.addNewTask()
         })
-//        fab_add_task.setImageResource(R.drawable.ic_add)
-//        fab_add_task.setOnClickListener({ mPresenter.addNewTask() })
 
         // Set up progress indicator
         (refresh_layout).setColorSchemeColors(
@@ -76,7 +68,9 @@ class TasksFragment : Fragment(), TasksContract.View {
 
         // Set the scrolling view in the custom SwipeRefreshLayout.
         (refresh_layout).mScrollUpChild = tasks_list
-        (refresh_layout).setOnRefreshListener({ mPresenter.loadTasks(false) })
+        (refresh_layout).setOnRefreshListener({
+            mPresenter.loadTasks(false)
+        })
         setHasOptionsMenu(true)
     }
 
@@ -158,7 +152,7 @@ class TasksFragment : Fragment(), TasksContract.View {
         private lateinit var mTasks: List<Task>
         private var mItemListener: TaskItemListener
 
-        public constructor(tasks: List<Task>, itemListener: TaskItemListener) {
+        constructor(tasks: List<Task>, itemListener: TaskItemListener) {
             setList(tasks)
             mItemListener = itemListener
         }
@@ -214,12 +208,5 @@ class TasksFragment : Fragment(), TasksContract.View {
 
         fun onActivateTaskClick(activatedTask: Task)
     }
-//    public interface TaskItemListener {
-//
-//        void onTaskClick(Task clickedTask);
-//
-//        void onCompleteTaskClick(Task completedTask);
-//
-//        void onActivateTaskClick(Task activatedTask);
-//    }
+
 }

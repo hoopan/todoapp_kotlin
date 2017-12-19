@@ -13,9 +13,9 @@ class TasksPresenter : TasksContract.Presenter {
 
     private val mTasksView: TasksContract.View
 
-    private var mCurrentFiltering: TasksFilterType = TasksFilterType.ALL_TASKS
+    private var mCurrentFiltering = TasksFilterType.ALL_TASKS
 
-    private var mFirstLoad: Boolean = true
+    private var mFirstLoad = true
 
     constructor(@NonNull tasksRepository: TasksRepository, @NonNull tasksView: TasksContract.View) {
         mTasksRepository = checkNotNull(tasksRepository)
