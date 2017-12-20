@@ -11,11 +11,12 @@ import org.jetbrains.annotations.Nullable
  */
 class AddEditTaskPresenter constructor(@Nullable taskId: String, tasksRepository: TasksRepository, addTaskView: View) : Presenter, TasksDataSource.GetTaskCallback {
 
-    private var mTaskId: String = taskId
-    var mTasksRepository = tasksRepository
-    var mAddTaskView = addTaskView
+    private var mTaskId: String
+    var mTasksRepository: TasksRepository
+    var mAddTaskView: View
 
     init {
+        mTaskId = taskId
         mAddTaskView = checkNotNull(addTaskView)
         mTasksRepository = checkNotNull(tasksRepository)
         addTaskView.setPresenter(this)

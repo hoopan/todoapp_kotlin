@@ -40,7 +40,7 @@ interface TasksContract {
 
         fun showSuccessfullySavedMessage()
 
-        fun isActive()
+        fun isActive(): Boolean
 
         fun showFilteringPopUpMenu()
     }

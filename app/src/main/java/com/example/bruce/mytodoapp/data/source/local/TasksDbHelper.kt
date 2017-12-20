@@ -32,11 +32,12 @@ class TasksDbHelper : SQLiteOpenHelper {
     " )"
     }
 
-    public constructor(context: Context) : super(context, DATABASE_NAME, null, DATABASE_VERSION)
+    constructor(context: Context) : super(context, DATABASE_NAME, null, DATABASE_VERSION)
 
 
 
     override fun onCreate(p0: SQLiteDatabase?) {
+        p0?.execSQL(SQL_CREATE_ENTRIES)
     }
 
     override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
@@ -45,9 +46,7 @@ class TasksDbHelper : SQLiteOpenHelper {
     override fun onDowngrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         super.onDowngrade(db, oldVersion, newVersion)
     }
-//    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//        // Not required as at version 1
-//    }
+
 
 }
 

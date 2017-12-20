@@ -1,11 +1,14 @@
 package com.example.bruce.mytodoapp.addedittask
 
 import android.os.Bundle
+import android.support.annotation.VisibleForTesting
+import android.support.test.espresso.IdlingResource
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.example.bruce.mytodoapp.Injection
 import com.example.bruce.mytodoapp.R
 import com.example.bruce.mytodoapp.util.ActivityUtils
+import com.example.bruce.mytodoapp.util.EspressoIdlingResource
 import kotlinx.android.synthetic.main.addtask_act.*
 
 /**
@@ -49,16 +52,17 @@ class AddEditTaskActivity : AppCompatActivity() {
         }
 
         // Create the presenter
-        AddEditTaskPresenter(if (taskId == null) {
-            ""
-        } else {
-            taskId
-        }, Injection.provideTasksRepository(applicationContext), addEditTaskFragment as AddEditTaskFragment)
+        AddEditTaskPresenter(taskId ?: "",Injection.provideTasksRepository(applicationContext), addEditTaskFragment as AddEditTaskFragment)
     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    @VisibleForTesting
+    fun getCountingIdlingResource(): IdlingResource {
+        return EspressoIdlingResource.getIdlingResource()
     }
 
 

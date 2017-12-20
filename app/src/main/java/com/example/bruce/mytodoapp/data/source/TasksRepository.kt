@@ -36,7 +36,7 @@ class TasksRepository : TasksDataSource {
     /**
      * This variable has package local visibility so it can be accessed from tests.
      */
-    var mCachedTasks: Map<String, Task>? = null
+    var mCachedTasks: MutableMap<String, Task>? = null
 
     /**
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
@@ -93,30 +93,91 @@ class TasksRepository : TasksDataSource {
     }
 
     override fun saveTask(task: Task) {
+        checkNotNull(task)
+        mTasksRemoteDataSource.saveTask(task)
+        mTasksLocalDataSource.saveTask(task)
+
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedTasks == null) {
+            mCachedTasks = LinkedHashMap()
+        }
+        mCachedTasks?.put(task.mId, task)
     }
 
     override fun completeTask(task: Task) {
+        checkNotNull(task)
+        mTasksRemoteDataSource.completeTask(task)
+        mTasksLocalDataSource.completeTask(task)
+
+        var completedTask = Task(task.mTitle, task.mDescription, task.mId, true)
+
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedTasks == null) {
+            mCachedTasks = LinkedHashMap()
+        }
+        mCachedTasks?.put(task.mId, completedTask)
     }
 
     override fun completeTask(taskId: String) {
+        checkNotNull(taskId)
+        completeTask(getTaskWithId(taskId)!!)
     }
 
     override fun activateTask(task: Task) {
+        checkNotNull(task)
+        mTasksRemoteDataSource.activateTask(task)
+        mTasksLocalDataSource.activateTask(task)
+
+        var activeTask = Task(task.mTitle, task.mDescription, task.mId)
+
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedTasks == null) {
+            mCachedTasks = LinkedHashMap()
+        }
+//        (mCachedTasks as LinkedHashMap).put(task.mId, activeTask)
+        mCachedTasks!![task.mId] = activeTask
     }
 
     override fun activateTask(taskId: String) {
+        checkNotNull(taskId)
+        activateTask(getTaskWithId(taskId)!!)
     }
 
     override fun clearCompletedTasks() {
+        mTasksRemoteDataSource.clearCompletedTasks()
+        mTasksLocalDataSource.clearCompletedTasks()
+
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedTasks == null) {
+            mCachedTasks = LinkedHashMap()
+        }
+        mCachedTasks?.map {
+            if (it.value.mCompleted) {
+                mCachedTasks?.remove(it.key)
+            }
+        }
+
     }
 
     override fun refreshTasks() {
+        mCacheIsDirty = true
     }
 
     override fun deleteAllTasks() {
+        mTasksRemoteDataSource.deleteAllTasks()
+        mTasksLocalDataSource.deleteAllTasks()
+
+        if (mCachedTasks == null) {
+            mCachedTasks = LinkedHashMap()
+        }
+        mCachedTasks?.clear()
     }
 
     override fun deleteTask(taskId: String) {
+        mTasksRemoteDataSource.deleteTask(checkNotNull(taskId))
+        mTasksLocalDataSource.deleteTask(checkNotNull(taskId))
+
+        mCachedTasks?.remove(taskId)
     }
 
     private fun getTasksFromRemoteDataSource(callback: TasksDataSource.LoadTasksCallback) {
@@ -159,7 +220,7 @@ class TasksRepository : TasksDataSource {
         checkNotNull(id)
         when (mCachedTasks == null || mCachedTasks!!.isEmpty()) {
             true -> return null
-            false -> return mCachedTasks!![id]
+            else -> return mCachedTasks?.get(id)
         }
     }
 

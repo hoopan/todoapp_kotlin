@@ -1,7 +1,9 @@
 package com.example.bruce.mytodoapp.addedittask
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -30,10 +32,6 @@ class AddEditTaskFragment : Fragment(),View {
         })
     }
 
-    override fun onViewCreated(view: android.view.View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
 
     override fun onResume() {
         super.onResume()
@@ -45,19 +43,24 @@ class AddEditTaskFragment : Fragment(),View {
     }
 
     override fun showEmptyTaskError() {
+        Snackbar.make(add_task_title, getString(R.string.empty_task_message), Snackbar.LENGTH_LONG).show()
     }
 
     override fun showTasksList() {
+        activity.setResult(Activity.RESULT_OK)
+        activity.finish()
     }
 
     override fun setTitle(title: String) {
+        add_task_title.setText(title)
     }
 
     override fun setDescription(description: String) {
+        add_task_description.setText(description)
     }
 
     override fun isActive(): Boolean {
-        return false
+        return isAdded
     }
 
     companion object {
