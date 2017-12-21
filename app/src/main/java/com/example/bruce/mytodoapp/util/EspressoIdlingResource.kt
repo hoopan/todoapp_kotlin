@@ -32,7 +32,7 @@ class SimpleCountingIdlingResource(resourceName: String) : IdlingResource {
     private val counter = AtomicInteger(0)
 
     // written from main thread, read from any thread.
-    private lateinit var resourceCallback: IdlingResource.ResourceCallback
+    @Volatile private var resourceCallback: IdlingResource.ResourceCallback? = null
 
     init {
         mResourceName = resourceName
@@ -68,7 +68,8 @@ class SimpleCountingIdlingResource(resourceName: String) : IdlingResource {
         var counterVal = counter.decrementAndGet()
         if (counterVal == 0) {
             // we've gone from non-zero to zero. That means we're idle now! Tell espresso.
-            resourceCallback.let { resourceCallback.onTransitionToIdle() }
+//            resourceCallback?.let { resourceCallback.onTransitionToIdle() }
+            resourceCallback?.onTransitionToIdle()
 //            if (null != resourceCallback) {
 //                resourceCallback.onTransitionToIdle()
 //            }

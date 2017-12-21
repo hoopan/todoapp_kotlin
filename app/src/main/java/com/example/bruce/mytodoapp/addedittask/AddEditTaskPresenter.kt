@@ -63,7 +63,7 @@ class AddEditTaskPresenter constructor(@Nullable taskId: String, tasksRepository
     }
 
     private fun isNewTask(): Boolean {
-        return mTaskId == null
+        return mTaskId == null || mTaskId == ""
     }
 
     private fun createTask(title: String, description: String) {
